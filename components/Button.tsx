@@ -41,9 +41,11 @@ export interface IButtonProps
   variant?: VariantType;
   square?: boolean;
   paddingLess?: boolean;
+  disabled?: boolean;
 }
 export const Button = ({
   className,
+  disabled = false,
   children,
   variant,
   square,
@@ -55,6 +57,7 @@ export const Button = ({
     <button
       {...props}
       type={type}
+      disabled={disabled}
       className={`
    
           ${getVariant(variant)}  transition duration-75  ${

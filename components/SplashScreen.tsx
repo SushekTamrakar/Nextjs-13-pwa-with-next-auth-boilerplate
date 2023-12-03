@@ -9,23 +9,11 @@ const SplashScreen = ({ finishLoading }: any) => {
 
   const animate = () => {
     const loader = anime.timeline({
-      complete: () => finishLoading(),
+      complete: () => {
+        finishLoading();
+      },
     });
 
-    loader.add({
-      targets: "#logo",
-      delay: 1,
-      scale: 1,
-      duration: 500,
-      easing: "easeInOutExpo",
-    });
-    loader.add({
-      targets: "#logo",
-      delay: 1,
-      scale: 1.25,
-      duration: 500,
-      easing: "easeInOutExpo",
-    });
     loader.add({
       targets: "#logo",
       delay: 1,
@@ -57,9 +45,10 @@ const SplashScreen = ({ finishLoading }: any) => {
   };
 
   useEffect(() => {
-    const timeout = setTimeout(() => setIsMounted(true), 10);
+    const timeout = setTimeout(() => setIsMounted(true), 5);
     animate();
     return () => clearTimeout(timeout);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (
