@@ -3,25 +3,14 @@
 import { Button } from "@/components/Button";
 import CircularLoading from "@/components/CircularLoading";
 import InputBox from "@/components/InputBox";
-import { Backend_URL } from "@/lib/Constants";
 import Link from "next/link";
-import React, { useRef, useState } from "react";
 import { ToastContainer, toast } from "react-toastify";
-
-type FormInputs = {
-  phone_number: string;
-  email: string;
-  password: string;
-  first_name: string;
-  last_name: string;
-  profile: {
-    district: number;
-    province: number;
-  };
-};
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { TSignUpSchema, signUpSchema } from "@/lib/types/auth.types";
+import { Backend_URL } from "@/lib/Constants";
 
 const showToastMessage = (message: string) => {
-  console.log("toasting ");
   toast.info(message, {
     position: "top-right",
     autoClose: 5000,
@@ -35,24 +24,20 @@ const showToastMessage = (message: string) => {
 };
 
 const SignupPage = () => {
-  const [loading, setLoading] = useState(false);
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isSubmitting },
+    reset,
+  } = useForm<TSignUpSchema>({
+    resolver: zodResolver(signUpSchema),
+  });
 
-  const register = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    setLoading(true);
+  const onSubmit = async (data: TSignUpSchema) => {
+    console.log("🚀 ~ file: page.tsx:38 ~ onSubmit ~ data:", data);
     const res = await fetch(Backend_URL + "/auth/users/", {
       method: "POST",
-      body: JSON.stringify({
-        phone_number: data.current.phone_number,
-        email: data.current.email,
-        password: data.current.password,
-        first_name: data.current.first_name,
-        last_name: data.current.last_name,
-        profile: {
-          district: data.current.profile.district,
-          province: data.current.profile.province,
-        },
-      }),
+      body: JSON.stringify(data),
       headers: {
         "Content-Type": "application/json",
       },
@@ -68,21 +53,9 @@ const SignupPage = () => {
           showToastMessage(message as string);
         }
       });
-      setLoading(false);
     }
+    reset();
   };
-
-  const data = useRef<FormInputs>({
-    phone_number: "",
-    email: "",
-    password: "",
-    first_name: "",
-    last_name: "",
-    profile: {
-      district: 1,
-      province: 1,
-    },
-  });
 
   return (
     <main className="min-h-screen shadow flex-col-center p-24">
@@ -92,57 +65,61 @@ const SignupPage = () => {
       </div>
       <ToastContainer />
       <form
-        onSubmit={register}
+        onSubmit={handleSubmit(onSubmit)}
         className="p-2 flex flex-col gap-3 mt-8 space-y-5"
       >
         <div className="flex space-x-3">
           <InputBox
+            {...register("firstName")}
             name="fist_name"
-            labelText="Fist name"
+            labelText="First name"
             type="text"
-            required
-            onChange={(e) => (data.current.first_name = e.target.value)}
           />
+          {errors.firstName && (
+            <p className="text-red-500">{`${errors.firstName?.message}`}</p>
+          )}
           <InputBox
+            {...register("lastName")}
             name="last_name"
             labelText="Last name"
             type="text"
-            required
-            onChange={(e) => (data.current.last_name = e.target.value)}
           />
+          {errors.lastName && (
+            <p className="text-red-500">{`${errors.lastName?.message}`}</p>
+          )}
         </div>
         <div className="flex space-x-3">
           <InputBox
+            {...register("phoneNumber")}
             autoComplete="off"
             name="phone_number"
             labelText="Phone number"
-            required
-            onChange={(e) => (data.current.phone_number = e.target.value)}
           />
-          <InputBox
-            name="email"
-            labelText="Email"
-            required
-            onChange={(e) => (data.current.email = e.target.value)}
-          />
+          {errors.phoneNumber && (
+            <p className="text-red-500">{`${errors.phoneNumber?.message}`}</p>
+          )}
+          <InputBox {...register("email")} name="email" labelText="Email" />
         </div>
+        {errors.email && (
+          <p className="text-red-500">{`${errors.email?.message}`}</p>
+        )}
         <InputBox
-          name="password"
-          labelText="Password"
+          {...register("password")}
           type="password"
-          required
-          onChange={(e) => (data.current.password = e.target.value)}
+          placeholder="Password"
         />
-
+        {errors.password && (
+          <p className="text-red-500">{`${errors.password?.message}`}</p>
+        )}
         <div className="flex-row-center pt-8">
           <Button
+            disabled={isSubmitting}
             type="submit"
-            className="w-full rounded-full"
-            disabled={loading}
+            className="w-full rounded-full disabled:bg-violet-100"
           >
             <div className="flex-row-center space-x-3">
               <p>Create an account </p>
-              {loading && <CircularLoading size={20} />}
+              {isSubmitting && <CircularLoading size={20} />}
             </div>
           </Button>
         </div>

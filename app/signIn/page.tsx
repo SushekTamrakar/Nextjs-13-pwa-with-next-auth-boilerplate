@@ -35,8 +35,6 @@ const SigninPage = () => {
   const [loading, setLoading] = useState(false);
 
   const login = async (e: React.FormEvent<HTMLFormElement>) => {
-    const initialVisitValue = !!sessionStorage.getItem("isInitialVisit");
-
     e.preventDefault();
     setLoading(true);
     const { ok, error } = (await signIn("credentials", {
@@ -52,14 +50,6 @@ const SigninPage = () => {
       );
       setLoading(false);
     }
-
-    // if (!res.ok) {
-    //   alert(res.statusText);
-    //   return;
-    // }
-    // const response = await res.json();
-    // alert("User Authenticated!");
-    // console.log({ response });
   };
 
   const data = useRef<FormInputs>({
@@ -93,7 +83,11 @@ const SigninPage = () => {
         />
 
         <div className="pt-8">
-          <Button type="submit" className="h-11 w-full rounded-full">
+          <Button
+            disabled={loading}
+            type="submit"
+            className="h-11 w-full rounded-full disabled:bg-gray-500"
+          >
             <div className="relative flex items-center justify-between space-x-3">
               <div></div>
               <p className="absolute inset-0 flex items-center justify-center">
