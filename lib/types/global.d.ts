@@ -1,9 +1,12 @@
 export {};
 
 declare global {
-  interface User {
+  interface GenericResponse {
     status: string;
-    code: number;
+    code: number | undefined;
+    message: string;
+  }
+  interface User extends GenericResponse {
     data: {
       id: number;
       user_type: string;

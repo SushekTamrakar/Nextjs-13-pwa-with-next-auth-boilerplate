@@ -17,7 +17,7 @@ import { GetScreenSize } from "@/utils/GetScreenSize";
 import { styled } from "@mui/system";
 import { usePathname, useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
-import { blackListedRoutes } from "@/lib/Constants";
+import { bottomTabBarBlackListedRoutes } from "@/lib/Constants";
 
 const TabBarButton = styled(BottomNavigationAction)({
   color: "#bebebe",
@@ -71,7 +71,7 @@ export default function BottomTabs() {
     }
   }, [controlNavbar]);
 
-  if (blackListedRoutes.includes(pathName.toString())) return null;
+  if (bottomTabBarBlackListedRoutes.includes(pathName.toString())) return null;
 
   return (
     <div
